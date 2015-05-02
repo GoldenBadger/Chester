@@ -1,10 +1,13 @@
 """The part of Chester which acts as an IRC bot."""
 
+import logging
+
 from twisted.internet import protocol
-from twisted.python import log
 from twisted.words.protocols import irc
 
 from chester import VERSION
+
+logging.basicConfig(level=logging.INFO)
 
 class ChessBot(irc.IRCClient):
     """The actual IRC client for Chester."""
@@ -15,27 +18,27 @@ class ChessBot(irc.IRCClient):
         self.nickname = self.factory.nickname
         self.realname = self.factory.realname
         irc.IRCClient.connectionMade(self)
-        log.msg("Connection made.")
+        logging.info("Connection made.")
     
     def connectionLost(self, reason):
         """Called when a connection is lost."""
         
         irc.IRCClient.connectionLost(self, reason)
-        log.msg("Connection lost: {!r}".format(reason))
+        logging.info("Connection lost: {!r}".format(reason))
     
     def signedOn(self):
         """Called when bot has successfully signed on to a channel."""
         
-        log.msg("Signed on.")
+        logging.info("Signed on.")
         if self.nickname != self.factory.nickname:
-            log.msg("Desired nickname taken. Actual nick: "
+            logging.info("Desired nickname taken. Actual nick: "
                     "\"{}\"".format(self.nickname))
         self.join(self.factory.channel)
     
     def joined(self, channel):
         """Called when the bot joins the channel."""
         
-        log.msg("{nick} has joined {channel}"
+        logging.info("{nick} has joined {channel}"
                 .format(nick=self.nickname, channel=self.factory.channel))
     
     def privmsg(self, user, channel, msg):
@@ -51,7 +54,7 @@ class ChessBot(irc.IRCClient):
         
         if send_to:
             self.msg(send_to, VERSION)
-            log.msg("Sent version info to {receiver}.".format(receiver=send_to))
+            logging.info("Sent version info to {receiver}.".format(receiver=send_to))
 
 class ChessBotFactory(protocol.ClientFactory):
     """Set up the ChessBot IRC protocol."""

@@ -17,6 +17,5 @@ if __name__ == "__main__":
     realname = config.get("irc", "realname")
     channel = config.get("irc", "channel")
     
-    print "Read config file."
     reactor.connectTCP(host, port, ChessBotFactory(channel, nickname, realname))
     reactor.run()
