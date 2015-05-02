@@ -4,17 +4,7 @@ from twisted.internet import protocol
 from twisted.python import log
 from twisted.words.protocols import irc
 
-class ChessBotFactory(protocol.ClientFactory):
-    """Set up the ChessBot IRC protocol."""
-    
-    protocol = ChessBot
-    
-    def __init__(self, channel, nickname, realname):
-        """Initialise the bot factory with our settings."""
-        
-        self.channel = channel
-        self.nickname = nickname
-        self.realname = realname
+from chester import VERSION
 
 class ChessBot(irc.IRCClient):
     """The actual IRC client for Chester."""
@@ -53,12 +43,24 @@ class ChessBot(irc.IRCClient):
         channel the bot is on.
         """
         
-        sendTo = None
-        senderNick = user.split("!", 1)[0]
-        if channel = self.nickname and msg.startswith("version"):
+        send_to = None
+        sender_nick = user.split("!", 1)[0]
+        if channel == self.nickname and msg.startswith("version"):
             # If a private message starting with "version" is sent to the bot.
-            sendTo = senderNick
+            send_to = sender_nick
         
-        if sendTo:
-            self.msg(sendTo, VERSION)
-            log.msg("Sent version info to {receiver}.".format(receiver=sendTo))
+        if send_to:
+            self.msg(send_to, VERSION)
+            log.msg("Sent version info to {receiver}.".format(receiver=send_to))
+
+class ChessBotFactory(protocol.ClientFactory):
+    """Set up the ChessBot IRC protocol."""
+    
+    protocol = ChessBot
+    
+    def __init__(self, channel, nickname, realname):
+        """Initialise the bot factory with our settings."""
+        
+        self.channel = channel
+        self.nickname = nickname
+        self.realname = realname
